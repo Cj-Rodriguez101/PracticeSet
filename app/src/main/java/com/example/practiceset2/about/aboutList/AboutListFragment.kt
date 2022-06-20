@@ -61,43 +61,26 @@ class AboutListFragment : Fragment() {
             adapter = AboutListAdapter(onClickListener = AboutListAdapter.OnClickListener {dto, position->
                 if (!isContextualMode){
                     viewModel.setUserDto(dto)
-                    //(requireParentFragment() as BaseAboutFragment).setUserDto(it)
                     (requireParentFragment() as BaseAboutFragment).navigateToScreen(0)
-                    //Log.e("clicked", "clicked ${it}")
                 } else {
                     viewModel.addOrRemoveSelectedUsers(dto)
-                    //toolBar.title = "${viewModel.selectedUsers.value?.size} Item Selected"
-                    //add or remove this id to list
-                    //check and uncheck this item
-                        //val yes: UserDto = adapter?.getItem(position)!!
-                    //adapter?.updateCheckedState(position)
                 }
             }, onLongClickListener = AboutListAdapter.OnLongClickListener{
-                Log.e("longClick", "long ${it}")
                 viewModel.addOrRemoveSelectedUsers(it)
-//                for (count in 0 until binding.aboutListRecycle.childCount){
-//                    val holder: UserViewHolder = binding.aboutListRecycle.getChildViewHolder(binding.aboutListRecycle.getChildAt(count)) as UserViewHolder
-//                    holder.resetCheck()
-//                }
-
-//                if (!isContextualMode && binding.aboutListRecycle.childCount==0) {
-//                    for (count in 0 until binding.aboutListRecycle.childCount){
-//                        binding.aboutListRecycle.getChildViewHolder(binding.aboutListRecycle.getChildAt(count))?.let { holder->
-//                            holder.itemView
-//                        }
-//                    }
-//                }
                 if (!isContextualMode) {
                     toolBar.menu.clear()
                     toolBar.inflateMenu(R.menu.about_contextual_menu)
                     val checkbox = toolBar.menu.findItem(R.id.select_all).actionView as CheckBox
-                    checkbox.setOnCheckedChangeListener { compoundButton, b ->
-                        //Log.e("tag", "select_all")
+                    checkbox.setOnCheckedChangeListener { _,_ ->
                         selectDeselectItems()
                     }
-                    //toolBar.title = "${viewModel.selectedUsers.value?.size} Item Selected"
                 }
             })
+
+            binding.fab.setOnClickListener {
+                viewModel.resetUserDto()
+                (requireParentFragment() as BaseAboutFragment).navigateToScreen(0)
+            }
 
         }
 
@@ -117,30 +100,7 @@ class AboutListFragment : Fragment() {
 
         if (backCallback == null){
             backCallback = object : OnBackPressedCallback(true){
-                override fun handleOnBackPressed() {
-                    Log.e("backtrack","back pressed here")
-//                    if (isContextualMode){
-//                        isContextualMode = false
-//                        toolBar.title = "About"
-//
-////                        val list : List<UserDto?> = adapter!!.snapshot().map { dto->
-////                            dto?.copy(isChecked = false)
-////                        }
-//
-//                        //adapter!!.snapshot().items.find { it.isChecked }?.isChecked = false
-//
-//                        adapter?.notifyDataSetChanged()
-//                        toolBar.inflateMenu(R.menu.about_menu)
-//                    } else {
-//                        backCallback?.remove()
-//                        backCallback?.isEnabled = false
-//                        adapter?.notifyDataSetChanged()
-//                        findNavController().popBackStack()
-//                    }
-//                    viewModel.clearList()
-                    resetContextualMode()
-                }
-
+                override fun handleOnBackPressed() { resetContextualMode() }
             }
         }
 
@@ -149,11 +109,6 @@ class AboutListFragment : Fragment() {
         requireActivity().onBackPressedDispatcher
             .addCallback(viewLifecycleOwner, backCallback!!)
 
-
-
-//        val viewModel by viewModels<AboutListViewModel>{
-//            AboutListViewModelFactory((requireContext().applicationContext))
-//        }
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             aboutListViewModel = viewModel
@@ -196,12 +151,10 @@ class AboutListFragment : Fragment() {
                         requireContext().buildDialog(title = if(dataState.data!=null) "Success" else "Error",
                             isError = dataState.data==null, description = dataState.message?.description?:"desc",
                             onDismiss = {
-                                //resetContextualMode()
                                 viewModel.resetInfo()
                             })
                         resetContextualMode()
                         viewModel.resetInfo()
-                        Log.e("result", "from enter fragment")
                     }
                 }
             }
@@ -213,8 +166,6 @@ class AboutListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //binding = null
-        //adapter?.removeLoadStateListener {  }
         fragBinding = null
         adapter = null
         backCallback = null
@@ -235,16 +186,12 @@ class AboutListFragment : Fragment() {
             resetContextualMode()
             return true
         } else if (item.itemId == R.id.select_all){
-            //Log.e("tag", "select_all ${item.isChecked}")
-            //selectDeselectItems()
             return true
         } else if (item.itemId == R.id.delete_all){
-            Log.e("tag", "delete all")
-            //create dialong to ask are you sure
+            //create dialog to ask are you sure
             val userList = viewModel.selectedUsers.value?: listOf<UserDto>()
-            requireContext().buildAreYouSureDialog(userList, {
-
-            }, {viewModel.deleteUsers(userList)})
+            requireContext().buildAreYouSureDialog(selectList = userList,
+                onSuccess = {viewModel.deleteUsers(userList)})
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -252,11 +199,6 @@ class AboutListFragment : Fragment() {
 
     private fun selectDeselectItems() {
         viewModel.selectedUsers.value?.let {
-//            if (it.isNullOrEmpty()){
-//                selectAllMode = "All"
-//            } else {
-//                selectAllMode = "None"
-//            }
             val size = adapter?.snapshot()?.items?.size?:0
 
             val list = adapter?.snapshot()?.items
@@ -264,13 +206,11 @@ class AboutListFragment : Fragment() {
             if(it.size == size){
                 selectAllMode = "None"
                 viewModel.clearList()
-                //toolBar.title = "${viewModel.selectedUsers.value?.size} Item Selected"
             } else{
                 selectAllMode = "All"
                 viewModel.clearList()
                 list?.let { list1->
                     viewModel.addAllSelectedItems(list1)
-                    //toolBar.title = "${list1.size} Item Selected"
                 }
             }
             adapter?.notifyDataSetChanged()
@@ -280,20 +220,17 @@ class AboutListFragment : Fragment() {
     private fun resetContextualMode() {
         if (isContextualMode) {
             isContextualMode = false
-            //toolBar.title = "About"
 
             adapter?.snapshot()?.items?.filter { it.isChecked }?.forEach {
                 it.isChecked = false }
-            adapter?.notifyDataSetChanged()
             toolBar.menu.clear()
-            toolBar.inflateMenu(R.menu.about_menu)
             toolBar.inflateMenu(R.menu.overflow_menu)
         } else {
             backCallback?.remove()
             backCallback?.isEnabled = false
-            adapter?.notifyDataSetChanged()
             findNavController().popBackStack()
         }
+        adapter?.notifyDataSetChanged()
         viewModel.clearList()
         selectAllMode = "Default"
     }

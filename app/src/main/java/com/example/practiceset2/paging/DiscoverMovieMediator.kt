@@ -47,15 +47,12 @@ class DiscoverMovieMediator(val movieService: MovieService, val appDatabase: Vid
 
         try {
             val response = movieService.getDiscoverMovies("en", page).await()
-            Log.e("page", "${response.results.size} ${page}")
             val isEndOfList = response.results.isEmpty()
             appDatabase.withTransaction {
                 // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
                     appDatabase.discoverMoviesKeysDao().clearRemoteKeys()
                     appDatabase.discoverCacheDao().clearAllMovieData()
-
-                    //Log.e("YUM"," ${pageKeyData} FIRST REFRESH")
                 }
                 val prevKey = if (page == DEFAULT_PAGE_INDEX) null else page - 1
                 val nextKey = if (isEndOfList) null else page + 1

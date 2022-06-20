@@ -70,9 +70,3 @@ fun MovieNetworkDto.toDiscoverMovieDevCache(): DiscoverDevCache {
         poster_path = poster_path
     )
 }
-
-fun List<MovieNetworkDto>.toMovieDevCacheList(): List<MovieDevCache>{
-    return this.map {
-        it.toMovieDevCache()
-    }
-}

@@ -34,13 +34,6 @@ class ListViewModel(val repository: ListRepository): ViewModel() {
             }
             job.join()
             _isLoading.value = false
-//            val yes = repository.observeVideos().value
-//            if (yes is Result.Success){
-//                if (yes.data.isNotEmpty()){
-//                    _status.value = yes.data.toString()
-//                    Log.e("newinside", yes.data.toString())
-//                }
-//            }
         }
     }
 }

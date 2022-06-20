@@ -1,9 +1,7 @@
 package com.example.practiceset2.util
 
 import android.content.Context
-import android.content.DialogInterface
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import com.example.practiceset2.R
 import com.example.practiceset2.network.UserDto
 
@@ -17,7 +15,7 @@ fun Context.buildDialog(title: String = "Success", isError: Boolean, description
 }
 
 fun Context.buildAreYouSureDialog(selectList: List<UserDto>,
-                                  onDismiss: ()-> Unit, onSuccess: (selectList: List<UserDto>)-> Unit){
+                                  onDismiss: ()-> Unit={}, onSuccess: (selectList: List<UserDto>)-> Unit){
     val selectSize = selectList.size
     val deleteString = when{
         selectSize>1->{
@@ -33,17 +31,17 @@ fun Context.buildAreYouSureDialog(selectList: List<UserDto>,
         }
     }
 
-    if (!selectList.isEmpty()){
+    if (selectList.isNotEmpty()){
         AlertDialog.Builder(this, R.style.AlertDialogTheme).apply {
             setTitle("Are You Sure")
             setMessage("Are you sure you want to delete $deleteString")
             setOnDismissListener { onDismiss() }
-                .setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+                .setPositiveButton("Yes") { _, _ ->
                     onSuccess.invoke(selectList)
-                })
-                .setNegativeButton("No", DialogInterface.OnClickListener { dialogInterface, i ->
+                }
+                .setNegativeButton("No") { _, _ ->
                     onDismiss.invoke()
-                })
+                }
             setIcon(R.drawable.ic_baseline_info_24)
         }.show()
     } else {

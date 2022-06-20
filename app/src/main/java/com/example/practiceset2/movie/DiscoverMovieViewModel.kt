@@ -10,7 +10,7 @@ import com.example.practiceset2.list.ListRepository
 import com.example.practiceset2.util.ServiceLocator
 
 @ExperimentalPagingApi
-class DiscoverMovieViewModel(val listRepository: ListRepository): ViewModel() {
+class DiscoverMovieViewModel(listRepository: ListRepository): ViewModel() {
 
     val movies : LiveData<PagingData<MovieDevItem>> = listRepository.getDiscoverForMovie().cachedIn(viewModelScope)
 

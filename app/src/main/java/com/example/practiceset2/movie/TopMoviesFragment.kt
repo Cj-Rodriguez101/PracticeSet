@@ -33,13 +33,7 @@ class TopMoviesFragment : Fragment() {
 
     var binding: FragmentMovieBinding? = null
     var adapter: MovieAdapter? = null
-    //var job: CoroutineScope? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    @OptIn(InternalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,30 +47,6 @@ class TopMoviesFragment : Fragment() {
             MovieViewModelFactory((requireContext().applicationContext))
         }
         binding = fragmentBinding
-//        binding?.apply {
-//            lifecycleOwner = viewLifecycleOwner
-//            movieViewModel = viewModel
-//            adapter = MovieAdapter()
-//            movieRecycle.adapter = MovieAdapter()
-//        }
-
-//        fragmentBinding.movieRecycle.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-//                val lastPosition = layoutManager.findLastVisibleItemPosition()
-//                adapter?.let {
-//                    if (lastPosition == it.itemCount - 1) {
-//                        viewModel.getObserveList()
-//                    }
-//                }
-//            }
-//        })
-
-
-        //here
-        //fragmentBinding.movieViewModel = viewModel
-        //fragmentBinding.bindState(viewModel)
-
 
         binding?.apply {
             //for header and footer with retry button
@@ -85,25 +55,6 @@ class TopMoviesFragment : Fragment() {
                 footer = MovieLoadStateAdapter{adapter!!.retry()}
             )
 
-//            val listener = object : (CombinedLoadStates) -> Unit {
-//                override operator fun invoke(loadState: CombinedLoadStates) {
-//                    // Do some stuff
-//                    movieRecycle.isVisible = loadState.mediator?.refresh is LoadState.NotLoading
-//                    movieProgressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
-//                    retryMovieButton.isVisible = loadState.mediator?.refresh is LoadState.Error
-//                    handleError(loadState)
-//                    adapter?.removeLoadStateListener(this)
-//                }
-//            }
-//            adapter?.addLoadStateListener(listener)
-
-//            adapter?.addLoadStateListener {loadState->
-//                //for progress bar when loading
-//                movieRecycle.isVisible = loadState.mediator?.refresh is LoadState.NotLoading
-//                movieProgressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
-//                retryMovieButton.isVisible = loadState.mediator?.refresh is LoadState.Error
-//                handleError(loadState)
-//            }
             lifecycleOwner = viewLifecycleOwner
             movieViewModel = viewModel
 
@@ -112,14 +63,12 @@ class TopMoviesFragment : Fragment() {
             }
         }
 
-        //viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movies.observe(viewLifecycleOwner, Observer { data->
                 if (data!=null){
                     Log.e("this", "data ${data}")
                     viewLifecycleOwner.lifecycleScope.launch {
                         adapter?.submitData(data)
                     }
-                    //adapter?.notifyDataSetChanged()
                 }
             })
 
@@ -130,29 +79,6 @@ class TopMoviesFragment : Fragment() {
             binding?.retryMovieButton?.isVisible = loadState.mediator?.refresh is LoadState.Error
             handleError(loadState)
         }
-        //}
-
-
-//        viewModel.movies.observe(viewLifecycleOwner, Observer {
-//            it?.let { data->
-//                lifecycleScope.launch {
-//                    adapter?.submitData(data)
-//                }
-//                var some = data.map { here->here.title }
-//                Log.e("movies", "adapter ${some}")
-//            }
-//        })
-
-//        viewModel.movies.observe(viewLifecycleOwner, Observer { data->
-//            data?.let {
-////                adapter?.submitData(lifecycle, it)
-////                Log.e("movies", "adapter ${adapter} ${it}")
-//                lifecycleScope.launch {
-//                    adapter?.submitData(it)
-//                    Log.e("movies", "adapter ${adapter} ${it}")
-//                }
-//            }
-//        })
         setHasOptionsMenu(true)
         return fragmentBinding.root
     }
@@ -161,7 +87,6 @@ class TopMoviesFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-        //adapter?.removeLoadStateListener {  }
         adapter = null
     }
 

@@ -39,13 +39,6 @@ class AboutListAdapter(private val onClickListener: OnClickListener, private val
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-//        val userDto = getItem(position)
-//        userDto?.let {
-//            holder.itemView.setOnClickListener {
-//                onClickListener.onClick(userDto)
-//            }
-//            holder.bind(userDto)
-//        }
         getItem(position)?.let { dto->
             holder.itemView.setOnClickListener {
                 onClickListener.onClick(dto, position)
@@ -66,20 +59,8 @@ class AboutListAdapter(private val onClickListener: OnClickListener, private val
             }
             holder.itemView.setOnLongClickListener {
                 onLongClickListener.onLongClick(dto)
-                if (AboutListFragment.isContextualMode){
-
-                } else {
+                if(!AboutListFragment.isContextualMode) {
                     AboutListFragment.isContextualMode = true
-                    //holder.checkOrUnCheckView()
-                    //snapshot().items.find { it.id!=1000000000 }?.isChecked = false
-                    /*
-                    edit multiple items in a list
-                    https://stackoverflow.com/a/54800376/13412502
-                     */
-//                    snapshot().items.filter { it.isChecked }.forEach {
-//                        it.isChecked = false }
-                    //snapshot().find { it!!.isChecked || !it.isChecked}?.isChecked = false
-                    //AboutListFragment.selectAllMode = "Default"
                     notifyDataSetChanged()
                 }
                 holder.checkAlwaysView(dto)
@@ -87,11 +68,6 @@ class AboutListAdapter(private val onClickListener: OnClickListener, private val
                 notifyItemChanged(position)
             true
             }
-//            if (AboutListFragment.isContextualMode){
-//                holder.itemView as UserListItemBinding
-//            } else {
-//
-//            }
             holder.bind(dto, AboutListFragment.isContextualMode, AboutListFragment.selectAllMode)
         }
     }

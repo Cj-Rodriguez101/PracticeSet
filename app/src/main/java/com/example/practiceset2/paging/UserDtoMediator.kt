@@ -54,15 +54,9 @@ class UserDtoMediator(val goRestApiService: GoRestApiService, val appDatabase: V
                 if (loadType == LoadType.REFRESH) {
                     appDatabase.discoverMoviesKeysDao().clearRemoteKeys()
                     appDatabase.discoverCacheDao().clearAllMovieData()
-
-                    //Log.e("YUM"," ${pageKeyData} FIRST REFRESH")
                 }
                 val prevKey = if (page == DEFAULT_PAGE_INDEX) null else page - 1
                 val nextKey = if (isEndOfList) null else page + 1
-
-//                val prevKey = if(response.isNotEmpty()) page + 1 else null
-//                val nextKey = if (isEndOfList) null else page - 1
-                Log.e("page", "${page}")
                 val keys = response.map {
                     GoRestRemoteKey(repoId = it.id.toLong(), prevKey = prevKey, nextKey = nextKey)
                 }
@@ -115,7 +109,6 @@ class UserDtoMediator(val goRestApiService: GoRestApiService, val appDatabase: V
         return when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getClosestRemoteKey(state)
-                Log.e("YUM"," nextkey: ${remoteKeys?.nextKey?.minus(1)} remotekeys: ${remoteKeys} FIRST REFRESH")
                 remoteKeys?.nextKey?.minus(1) ?: DEFAULT_PAGE_INDEX
             }
             LoadType.APPEND -> {
@@ -123,15 +116,12 @@ class UserDtoMediator(val goRestApiService: GoRestApiService, val appDatabase: V
                 //newest
                 val remoteKeys = getLastRemoteKey(state)
                 val nextKey = remoteKeys?.nextKey
-
-                Log.e("YUM"," nextkey: ${nextKey} remotekeys: ${remoteKeys} FIRST APPEND")
                 if (nextKey == null) {
                     return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                 }
                 nextKey
             }
             LoadType.PREPEND -> {
-                Log.e("YUM"," FIRST PREPEND")
 
                 //newest
                 val remoteKeys = getFirstRemoteKey(state)

@@ -104,7 +104,6 @@ class ListRepository(private val videoDatabase: VideoDatabase,
 
             }
         } catch (ex: Exception){
-            Log.e("networkError", "${ex.message}")
             val errorMessage = ex.message?:"Unknown error"
             DataState.error(message = GenericMessageInfo.Builder().id("InsertUpdateUser.Error").title("Error")
                 .description(errorMessage).uiComponentType(UIComponentType.Dialog).build())

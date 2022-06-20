@@ -2,6 +2,7 @@ package com.example.practiceset2.about
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.ExperimentalPagingApi
@@ -21,7 +22,7 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 @ExperimentalPagingApi
-class BaseAboutViewModel(val application: Application, val listRepository: ListRepository): ViewModel() {
+class BaseAboutViewModel(private val application: Application, private val listRepository: ListRepository): ViewModel() {
 
     private val workManager = WorkManager.getInstance(application)
 
@@ -33,8 +34,10 @@ class BaseAboutViewModel(val application: Application, val listRepository: ListR
     var aboutList : LiveData<PagingData<UserDto>> = listRepository
         .getUsersPaged().cachedIn(viewModelScope)
 
+    var preference: SharedPreferences
+
     init {
-        val preference = application.applicationContext.getSharedPreferences("ShouldSchedule", Context.MODE_PRIVATE)
+          preference = application.applicationContext.getSharedPreferences("ShouldSchedule", Context.MODE_PRIVATE)
         _scheduleText.value = if (preference.getBoolean("ShouldSchedule", false)) "Cancel" else "Schedule"
     }
 
@@ -52,25 +55,16 @@ class BaseAboutViewModel(val application: Application, val listRepository: ListR
     fun addOrRemoveSelectedUsers(userDto: UserDto){
         _selectedUsers.value?.let { userList->
             if (userList.isNotEmpty() && userList.contains(userDto)){
-                //_selectedUsers.value.remove(userDto)
                 _selectedUsers.value = _selectedUsers.value?.filter { it!=userDto }
             } else {
-               // _selectedUsers.value!!.add(userDto)
                 _selectedUsers.value = _selectedUsers.value!!.plus(userDto)
             }
         }
     }
 
-    /*
-    Used to clear list
-     */
+    /* Used to clear list */
     fun clearList(){
         _selectedUsers.value = listOf()
-    }
-
-    fun refreshList(){
-        aboutList = listRepository
-            .getUsersPaged().cachedIn(viewModelScope)
     }
 
     fun addAllSelectedItems(userDto: List<UserDto>){
@@ -85,11 +79,11 @@ class BaseAboutViewModel(val application: Application, val listRepository: ListR
     val userDto: LiveData<UserDto?>
         get() = _userDto
 
-    private val _hours= MutableLiveData<Int>()
+    private val _hours= MutableLiveData<Int>(preference.getInt("TimeSchedule", 0))
     val hours: LiveData<Int>
         get() = _hours
 
-    val list = arrayOf("0.5","2", "4", "6", "8", "10" ,"12", "14", "16", "18", "20", "22", "24")
+    val list = arrayOf("15","30", "45", "60")
 
     private val _selectedHours= MutableLiveData<String>()
     val selectedHours: LiveData<String>
@@ -100,8 +94,8 @@ class BaseAboutViewModel(val application: Application, val listRepository: ListR
     }
 
     fun setHours(selectedIndex: Int){
+        preference.edit().putInt("TimeSchedule", selectedIndex).apply()
         _hours.value = selectedIndex
-        Log.e("realhours", "${list[selectedIndex]}")
         _selectedHours.value = list[selectedIndex]
     }
 
@@ -153,17 +147,8 @@ class BaseAboutViewModel(val application: Application, val listRepository: ListR
 
     fun createInstantNotification(){
 
-        //behave we are gonna chain work but for now we have one worker
-//        var continuation = workManager
-//            .beginUniqueWork(
-//                "DISPLAY_NOTIFICATION_TAG",
-//                ExistingWorkPolicy.REPLACE,
-//                OneTimeWorkRequest.from(CreateLatestNotificationWorker::class.java)
-//            )
-
         // Create charging constraint
         val constraints = Constraints.Builder()
-            //.setRequiresCharging(true)
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
@@ -177,37 +162,21 @@ class BaseAboutViewModel(val application: Application, val listRepository: ListR
 
     fun createPeriodicNotification(){
 
-        //behave we are gonna chain work but for now we have one worker
-//        var continuation = workManager
-//            .beginUniqueWork(
-//                "DISPLAY_NOTIFICATION_TAG",
-//                ExistingWorkPolicy.REPLACE,
-//                OneTimeWorkRequest.from(CreateLatestNotificationWorker::class.java)
-//            )
-
         // Create charging constraint
         val constraints = Constraints.Builder()
-            //.setRequiresCharging(true)
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val preference = application.applicationContext.getSharedPreferences("ShouldSchedule", Context.MODE_PRIVATE)
-        //val isScheduled = preference?.getBoolean("ShouldSchedule", false)?:false
-        val duration = preference?.getString("TimeSchedule", "10")?:"10"
-        val durationTime = Duration.ofHours(duration.toLong())
+        val interval = list[preference?.getInt("TimeSchedule", 0)?:0].toLong()
 
-        val work = PeriodicWorkRequestBuilder<CreateLatestNotificationWorker>(15, TimeUnit.MINUTES)
+        val work = PeriodicWorkRequestBuilder<CreateLatestNotificationWorker>(interval, TimeUnit.MINUTES)
             .setConstraints(constraints)
-            //.setInitialDelay(15, TimeUnit.MINUTES)
             .addTag("DISPLAY_NOTIFICATION_TAG")
             .build()
 
         workManager.enqueue(work)
         _scheduleText.value = "Cancel"
-    }
-
-    fun cancelWork(){
-        workManager.cancelUniqueWork("DISPLAY_NOTIFICATION_TAG")
     }
 
     fun cancelPeriodicWork(){
@@ -225,8 +194,7 @@ class BaseAboutViewModel(val application: Application, val listRepository: ListR
 @Suppress("UNCHECKED_CAST")
 class BaseAboutViewModelFactory(
     val context: Context
-)
-    : ViewModelProvider.NewInstanceFactory() {
+) : ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel> create(modelClass: Class<T>) =
         (BaseAboutViewModel(context as Application, ServiceLocator.provideListRepository(context)) as T)
 }

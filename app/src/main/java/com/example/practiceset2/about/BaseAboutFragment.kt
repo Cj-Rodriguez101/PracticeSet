@@ -23,8 +23,6 @@ import com.example.practiceset2.databinding.FragmentBaseAboutBinding
 import com.example.practiceset2.network.UserDto
 import timber.log.Timber
 
-//import com.example.practiceset2.databinding.FragmentAboutBinding
-//private var viewUserDto: UserDto? = null
 private const val ARG_PARAM1 = "param1"
 private var param1: UserDto? = null
 
@@ -34,10 +32,6 @@ class BaseAboutFragment : Fragment() {
     private var demoCollectionAdapter: DemoCollectionAdapter? = null
     private var fragBinding: FragmentBaseAboutBinding? = null
     private var callback: ViewPager2.OnPageChangeCallback? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -68,10 +62,7 @@ class BaseAboutFragment : Fragment() {
         val binding = FragmentBaseAboutBinding.inflate(inflater, container, false)
         setHasOptionsMenu(true)
         fragBinding = binding
-        //binding.pager.isUserInputEnabled = false
         binding.pager.adapter = demoCollectionAdapter
-
-        //setOnNavigationItemSelectedListener
 
         binding.bottomNavigationView.setOnItemSelectedListener {item->
             when(item.itemId){
@@ -111,22 +102,9 @@ class BaseAboutFragment : Fragment() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.about_menu, menu)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
-
-            R.id.menu_authenticate-> {
-                true
-            }
-
-            else -> {
-                NavigationUI.onNavDestinationSelected(item, findNavController()) ||
-                        super.onOptionsItemSelected(item)
-            }
-        }
+        return NavigationUI.onNavDestinationSelected(item, findNavController()) ||
+                    super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {
@@ -142,13 +120,6 @@ class BaseAboutFragment : Fragment() {
     fun navigateToScreen(index: Int){
         fragBinding?.pager?.setCurrentItem(index, true)
     }
-
-//    fun setUserDto(selectedUserDto: UserDto?){
-//        //viewUserDto = selectedUserDto
-//        viewModel.setUserDto(selectedUserDto?:UserDto())
-//        Log.e("setUserDto", "${selectedUserDto}")
-//        fragBinding?.pager?.setCurrentItem(0, true)
-//    }
 }
 
 class DemoCollectionAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {
@@ -161,10 +132,6 @@ class DemoCollectionAdapter(fragmentManager: FragmentManager, lifecycle: Lifecyc
         return when(position){
 
             0-> {
-//                viewUserDto?.let {
-//                    //notifyItemChanged(0)
-//                    EnterFragment.newInstance(it)
-//                }?:EnterFragment()
                 EnterFragment()
             }
 

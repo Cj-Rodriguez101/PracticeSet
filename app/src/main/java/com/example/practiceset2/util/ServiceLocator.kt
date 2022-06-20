@@ -10,7 +10,6 @@ import com.example.practiceset2.network.VideoNetworkDataSource
 
 object ServiceLocator {
 
-    private val lock = Any()
     private var database: VideoDatabase? = null
     @Volatile
     var videoRepository: ListRepository? = null
@@ -29,12 +28,6 @@ object ServiceLocator {
         return newRepo
     }
 
-    private fun createVideoLocalDataSource(context: Context): VideoLocalDataSource {
-        val database = database ?: createDataBase(context)
-        return VideoLocalDataSource(database.videoDao(),
-            database.remoteKeysDao(),
-            database.movieCacheDao())
-    }
 
     private fun createDataBase(context: Context): VideoDatabase {
         val result = Room.databaseBuilder(

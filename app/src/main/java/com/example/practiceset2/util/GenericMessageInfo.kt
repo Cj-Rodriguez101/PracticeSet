@@ -1,18 +1,18 @@
 package com.example.practiceset2.util
 
 class GenericMessageInfo
-private constructor(builder: GenericMessageInfo.Builder){
+private constructor(builder: Builder){
 
     // required
     val id: String
     var title: String = "Success"
-    val uiComponentType: UIComponentType
+    private val uiComponentType: UIComponentType
 
     // optional
-    val onDismiss: (() -> Unit)?
+    private val onDismiss: (() -> Unit)?
     val description: String?
-    val positiveAction: PositiveAction?
-    val negativeAction: NegativeAction?
+    private val positiveAction: PositiveAction?
+    private val negativeAction: NegativeAction?
 
     init {
         if(builder.id == null){
@@ -66,11 +66,6 @@ private constructor(builder: GenericMessageInfo.Builder){
             return this
         }
 
-        fun onDismiss(onDismiss: () -> Unit): Builder{
-            this.onDismiss = onDismiss
-            return this
-        }
-
         fun uiComponentType(
             uiComponentType: UIComponentType
         ) : Builder {
@@ -82,20 +77,6 @@ private constructor(builder: GenericMessageInfo.Builder){
             description: String
         ): Builder{
             this.description = description
-            return this
-        }
-
-        fun positive(
-            positiveAction: PositiveAction?,
-        ) : Builder {
-            this.positiveAction = positiveAction
-            return this
-        }
-
-        fun negative(
-            negativeAction: NegativeAction
-        ) : Builder {
-            this.negativeAction = negativeAction
             return this
         }
 

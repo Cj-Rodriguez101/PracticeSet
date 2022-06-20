@@ -4,35 +4,17 @@ import android.view.View
 import android.widget.*
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.viewModelScope
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.practiceset2.R
-import com.example.practiceset2.domain.MovieDevItem
 import com.example.practiceset2.domain.VideoDevItem
-import com.example.practiceset2.movie.MovieAdapter
-import com.example.practiceset2.movie.MovieViewModel
-import kotlinx.coroutines.*
 
 @BindingAdapter("listData")
 fun bindRecyclerView(recyclerView: RecyclerView, data: List<VideoDevItem>?) {
     val adapter = recyclerView.adapter as ListRecyclerViewAdapter
     adapter.submitList(data)
 }
-
-//@OptIn(ExperimentalPagingApi::class)
-//@BindingAdapter("pagedData")
-//fun bindPagedRecyclerView(recyclerView: RecyclerView, data: PagingData<MovieDevItem>?) {
-//    val adapter = recyclerView.adapter as MovieAdapter
-//    CoroutineScope(Dispatchers.Main).launch {
-//        data?.let {
-//            adapter.submitData(data)
-//        }
-//    }
-//}
 
 @BindingAdapter("imageUrl")
 fun bindImage(imgView: ImageView, imgUrl: String?) {

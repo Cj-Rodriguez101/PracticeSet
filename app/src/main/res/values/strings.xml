@@ -28,4 +28,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="notification">WorkManager Notification</string>
+    <string name="select_time_frame_to_schedule">Select Time Frame In Mins</string>
+    <string name="add_user">Add User</string>
 </resources>

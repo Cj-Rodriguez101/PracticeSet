@@ -49,11 +49,6 @@ class ListFragment : Fragment() {
             }
         }
 
-//        viewModel.items.observe(viewLifecycleOwner, Observer {
-//            it?.let {list->
-//                Log.e("items", "${list.map { it.title }.joinToString(",")}")
-//            }
-//        })
         setHasOptionsMenu(true)
         return fragmentBinding.root
     }

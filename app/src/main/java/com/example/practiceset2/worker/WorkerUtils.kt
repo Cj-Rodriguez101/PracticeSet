@@ -13,7 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavDeepLinkBuilder
 import com.example.practiceset2.R
-import com.example.practiceset2.activities.MainActivity
+import com.example.practiceset2.activity.MainActivity
 import com.example.practiceset2.network.UserDto
 import com.example.practiceset2.receiver.ActionReceiver
 

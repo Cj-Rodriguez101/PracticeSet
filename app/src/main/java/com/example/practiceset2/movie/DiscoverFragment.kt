@@ -26,9 +26,6 @@ import kotlinx.coroutines.launch
 class DiscoverFragment : Fragment() {
 
     var adapter: MovieAdapter? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,8 +91,6 @@ class DiscoverFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //binding = null
-        //adapter?.removeLoadStateListener {  }
         adapter = null
     }
 }

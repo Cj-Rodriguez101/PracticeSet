@@ -14,7 +14,7 @@
         android:theme="@style/Theme.PracticeSet2">
         <receiver android:name=".receiver.ActionReceiver"/>
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

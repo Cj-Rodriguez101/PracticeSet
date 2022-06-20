@@ -23,34 +23,21 @@ class NotificationFragment : Fragment() {
 
     private val viewModel: BaseAboutViewModel by viewModels({requireParentFragment()})
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val binding = FragmentNotificationBinding.inflate(inflater, container, false)
-//        val viewModel by viewModels<NotificationViewModel>{
-//            NotificationViewModelFactory()
-//        }
+
         fragBinding = binding
-        //val pickerValues = arrayOf("2", "4", "6", "8", "10" ,"12", "14", "16", "18", "20", "22", "24")
         binding.apply {
             numPicker.minValue = 0
-            numPicker.maxValue = 12
-            //numPicker.displayedValues = pickerValues
+            numPicker.maxValue = 3
             lifecycleOwner = viewLifecycleOwner
             notificationViewModel = viewModel
-            numPicker.setOnValueChangedListener { numberPicker, i, i2 ->
-                //Log.e("test", "no. ${pickerValues[i2]}")
-                viewModel.setHours(i2)
-            }
-            notificationButton.setOnClickListener {
-                viewModel.createInstantNotification()
-            }
+            numPicker.setOnValueChangedListener { numberPicker, i, i2 -> viewModel.setHours(i2) }
+            notificationButton.setOnClickListener { viewModel.createInstantNotification() }
 
             scheduleButton.setOnClickListener {
                 if (binding.scheduleButton.text == "Schedule"){
@@ -59,7 +46,7 @@ class NotificationFragment : Fragment() {
                         ?.getSharedPreferences("ShouldSchedule", Context.MODE_PRIVATE)
                     sharedPreferences?.edit()?.let {
                         it.putBoolean("ShouldSchedule", true)
-                        it.putString("TimeSchedule", viewModel.selectedHours.value)
+                        it.putInt("TimeSchedule", viewModel.selectedHours.value?.toInt()?:0)
                         it.apply()
                     }
                     viewModel.createPeriodicNotification()

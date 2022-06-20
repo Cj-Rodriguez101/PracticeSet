@@ -15,10 +15,7 @@ class UserViewHolder(val binding: UserListItemBinding): RecyclerView.ViewHolder(
             if(isContextualMode){
                 binding.checkbox.visibility = View.VISIBLE
                 if (selectALlMode!= "Default"){
-                    //binding.checkbox.isChecked = selectALlMode == "All"
                     binding.userDto!!.isChecked = selectALlMode == "All"
-                } else {
-
                 }
             } else {
                 binding.checkbox.visibility = View.GONE
@@ -28,25 +25,15 @@ class UserViewHolder(val binding: UserListItemBinding): RecyclerView.ViewHolder(
     }
 
     fun checkOrUnCheckView(userDto: UserDto){
-        //binding.checkbox.isChecked = !binding.checkbox.isChecked
         binding.userDto!!.isChecked = !userDto.isChecked
-        //binding.executePendingBindings()
     }
 
     fun checkAlwaysView(userDto: UserDto){
-        //binding.checkbox.isChecked = !binding.checkbox.isChecked
-        //if(!binding.userDto!!.isChecked) binding.userDto!!.isChecked = true
         binding.userDto!!.isChecked = true
-        //binding.executePendingBindings()
     }
 
     fun checkIfCheckBoxChecked(status: Boolean){
         binding.userDto!!.isChecked = status
-    }
-
-    fun resetCheck(){
-        binding.checkbox.isChecked = false
-        binding.userDto!!.isChecked = false
     }
 
     companion object {

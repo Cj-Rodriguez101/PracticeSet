@@ -25,7 +25,5 @@ data class DataState<T>(
                 data = data,
             )
         }
-
-//        fun <T>loading() = DataState<T>(isLoading = true)
     }
 }
