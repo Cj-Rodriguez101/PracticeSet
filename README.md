@@ -3,7 +3,9 @@ Practice Project For Google Associate Android Developer Exam With Networking
 
 ## Architecture - MVVM
 ## Tools
-* Retrofit
+* Retrofit for the Network Layer
+* Room for the Database Layer
+* SharedPreferences
 * Paging 3 with Remote Mediator
 * ViewPager2 with Tablayout and BottomNavBar
 * Glide
