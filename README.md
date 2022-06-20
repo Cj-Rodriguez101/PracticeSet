@@ -23,7 +23,7 @@ Practice Project For Google Associate Android Developer Exam With Networking
 
 ![alt text](https://github.com/Cj-Rodriguez101/PracticeSet/blob/dae40b221a316476a3d0119b558263551de437fd/MOVIE%20SCREEN.png)
 ### About Screen
-Enter, List and Notification connected by ViewPager 3, BottomNavBar while sharing the same ViewModel
+Enter, List and Notification connected by ViewPager 2, BottomNavBar while sharing the same ViewModel
 
 #### Enter Screen
 1. Insert/Update user into [GoRestApi](https://gorest.co.in/public/v2/)
